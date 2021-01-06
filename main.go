@@ -23,7 +23,7 @@ func main() {
 	port := getPort()
 	log.Printf("Serving on port %d", port)
 
-	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), router); err != nil {
+	if err := http.ListenAndServe(fmt.Sprintf("localhost:%d", port), router); err != nil {
 		log.Fatal(err)
 	}
 }

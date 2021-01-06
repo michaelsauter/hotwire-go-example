@@ -1,9 +1,9 @@
 import { connectStreamSource, disconnectStreamSource } from "@hotwired/turbo";
 
 /**
- * Creates a persistent connection to a websocket for use with Turbo Streams
+ * Creates a persistent connection to an event source (SSE) for use with Turbo Streams
  */
-export default class TurboStreamWebsocketSource extends HTMLElement {
+export default class TurboStreamEventSource extends HTMLElement {
   get src() {
     return this.getAttribute("src");
   }
@@ -18,12 +18,12 @@ export default class TurboStreamWebsocketSource extends HTMLElement {
 
   /**
    * Called when the element is inserted into the DOM.
-   * Connects to Turbo Streams as a source and sets up the websocket connection
+   * Connects to Turbo Streams as a source and sets up the event source (SSE) connection
    * for streaming updates to turbo streams
    */
   async connectedCallback() {
-    connectStreamSource(this);
-    this.ws = this.setupWebsocket();
+    this.es = this.setupEventSource();
+    connectStreamSource(this.es);
   }
 
   /**
@@ -31,9 +31,10 @@ export default class TurboStreamWebsocketSource extends HTMLElement {
    * Disconnects from Turbo Streams and deletes the WebSocket
    */
   disconnectedCallback() {
-    disconnectStreamSource(this);
-    if (this.ws) {
-      this.ws = null;
+    this.es.close();
+    disconnectStreamSource(this.es);
+    if (this.es) {
+      this.es = null;
     }
   }
 
@@ -51,12 +52,11 @@ export default class TurboStreamWebsocketSource extends HTMLElement {
   /**
    * Creates a WebSocket by combining the window host and the element's src attribute and wires it to dispatch messages
    */
-  setupWebsocket() {
-    let socketLocation = `ws://${window.location.host}${this.src}`
-    let ws = new WebSocket(socketLocation);
-    ws.onmessage = (msg) => {
+  setupEventSource() {
+    let es = new EventSource(`http://${window.location.host}${this.src}`);
+    es.onmessage = (msg) => {
       this.dispatchMessageEvent(msg);
     };
-    return ws;
+    return es;
   }
 }

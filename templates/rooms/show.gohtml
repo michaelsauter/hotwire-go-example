@@ -1,4 +1,4 @@
-<turbo-stream-websocket-source src="/rooms/{{.Room.ID}}/messages/socket"></turbo-stream-websocket-source>
+<turbo-stream-event-source src="/rooms/{{.Room.ID}}/messages/sse"></turbo-stream-event-source>
 
 <turbo-frame id="room">
   {{ template "room" . }}

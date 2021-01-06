@@ -37,8 +37,8 @@ func Register(r chi.Router) {
 			r.Route("/messages", func(r chi.Router) {
 				r.Post("/", messagesController.Create) // POST /rooms/{id}/messages
 
-				r.Get("/new", messagesController.New)       // GET /rooms/{id}/messages/new
-				r.Get("/socket", messagesController.Socket) // GET /rooms/{id}/messages/socket
+				r.Get("/new", messagesController.New) // GET /rooms/{id}/messages/new
+				r.Get("/sse", messagesController.SSE) // GET /rooms/{id}/messages/sse
 			})
 		})
 	})

@@ -5,12 +5,12 @@ import (
 	"net/http"
 
 	"github.com/while1malloc0/hotwire-go-example/models"
-	"github.com/while1malloc0/hotwire-go-example/pkg/pubsub"
-	"nhooyr.io/websocket"
+	"github.com/while1malloc0/hotwire-go-example/pkg/streamer"
 )
 
 // MessagesController implements Controller functionality for the Message model
-type MessagesController struct{}
+type MessagesController struct {
+}
 
 // New renders a form for creating a new Message
 func (*MessagesController) New(w http.ResponseWriter, r *http.Request) {
@@ -46,16 +46,11 @@ func (*MessagesController) Create(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	pubsub.Publish(room.ID, content.Bytes())
+	streamer.Publish(room.ID, content.Bytes())
 }
 
-// Socket opens a persistent WebSocket connection and subscribes it for updates to its room
-func (*MessagesController) Socket(w http.ResponseWriter, r *http.Request) {
-	ws, err := websocket.Accept(w, r, nil)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+// SSE opens a persistent WebSocket connection and subscribes it for updates to its room
+func (*MessagesController) SSE(w http.ResponseWriter, r *http.Request) {
 	room := r.Context().Value(ContextKeyRoom).(*models.Room)
-	pubsub.Subscribe(room.ID, ws)
+	streamer.Serve(room.ID, w, r)
 }

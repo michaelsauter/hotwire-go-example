@@ -1,4 +1,4 @@
-import TurboStreamWebsocketSource from "./TurboStreamWebsocketSource";
+import TurboStreamEventSource from "./TurboStreamEventSource";
 
 window.onload = () => {
   // This was implemented using a Stimulus controller in the original Rails
@@ -8,7 +8,7 @@ window.onload = () => {
   });
 
   customElements.define(
-    "turbo-stream-websocket-source",
-    TurboStreamWebsocketSource
+    "turbo-stream-event-source",
+    TurboStreamEventSource
   );
 };
